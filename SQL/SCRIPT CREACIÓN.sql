@@ -1,4 +1,7 @@
 /*SCRIPT DE CREACIÓN DE TABLAS*/
+DROP SCHEMA IF EXISTS `persal_dev`;
+CREATE SCHEMA `persal_dev`;
+USE `persal_dev`;
 
 /*BORRADO DE TABLAS EXISTENTES*/
 /*RESPETAR EL ORDEN DE BORRADO*/
@@ -25,8 +28,8 @@ DROP TABLE IF EXISTS REFORMAS;
 DROP TABLE IF EXISTS CLIENTES_INACTIVOS;
 
 /*BORRADO CUENTAS, PRESUPUESTOS, FACTURAS*/
-DROP TABLE IF EXISTS CUENTAS_EXPEDIENTE;
 DROP TABLE IF EXISTS FACTURAS;
+DROP TABLE IF EXISTS CUENTAS_EXPEDIENTE;
 DROP TABLE IF EXISTS PRESUPUESTOS;
 
 /*BORADO EXPEDIENTE*/
@@ -37,7 +40,6 @@ DROP TABLE IF EXISTS ACTIVIDADES;
 DROP TABLE IF EXISTS CLIENTES;
 /*CREACION DE TABLAS*/
 
-/*TABLA CLIENTES*/
 CREATE TABLE CLIENTES (
     nif CHAR(9) PRIMARY KEY,
     nombre VARCHAR(30) NOT NULL,
@@ -51,176 +53,203 @@ CREATE TABLE CLIENTES (
 
 /*TABLA TELÉFONOS*/
 CREATE TABLE TELEFONOS (
-	id SMALLINT PRIMARY KEY,
-	nif_cliente CHAR(9) NOT NULL,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+    nif_cliente CHAR(9) NOT NULL,
     numero NUMERIC(9) NOT NULL,
-    FOREIGN KEY(nif_cliente) REFERENCES CLIENTES(nif)
-    ON DELETE CASCADE
+    FOREIGN KEY (nif_cliente)
+        REFERENCES CLIENTES (nif)
+        ON DELETE CASCADE
 );
 
 /*TABLA EMAILS*/
 CREATE TABLE EMAILS (
-	id SMALLINT PRIMARY KEY,
-	nif_cliente CHAR(9) NOT NULL,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+    nif_cliente CHAR(9) NOT NULL,
     email VARCHAR(30) NOT NULL,
-    FOREIGN KEY(nif_cliente) REFERENCES CLIENTES(nif)
-    ON DELETE CASCADE
+    FOREIGN KEY (nif_cliente)
+        REFERENCES CLIENTES (nif)
+        ON DELETE CASCADE
 );
 
 /*TABLA CLIENTES INACTIVOS*/
 CREATE TABLE CLIENTES_INACTIVOS (
-	id SMALLINT NOT NULL,
+    fecha_inactivo TIMESTAMP NOT NULL DEFAULT NOW(),
     nif_cliente CHAR(9) NOT NULL,
-    FOREIGN KEY(nif_cliente) REFERENCES CLIENTES(nif)
-    ON DELETE CASCADE
+    FOREIGN KEY (nif_cliente)
+        REFERENCES CLIENTES (nif)
+        ON DELETE CASCADE
 );
 
 /*TABLA ACTIVIDADES*/
 CREATE TABLE ACTIVIDADES (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     nif_cliente CHAR(9) NOT NULL,
     tipo_actividad NUMERIC(1) NOT NULL,
     fecha_inicio TIMESTAMP NOT NULL DEFAULT NOW(),
     fecha_fin TIMESTAMP NOT NULL DEFAULT '2035-01-01',
-    FOREIGN KEY(nif_cliente) REFERENCES CLIENTES(nif)
+    FOREIGN KEY (nif_cliente)
+        REFERENCES CLIENTES (nif)
 );
 
 /*TABLA APERTURAS DE NEGOCIO*/
 CREATE TABLE APERTURAS_NEGOCIOS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_actividad SMALLINT NOT NULL,
     tipo_actividad VARCHAR(40) NOT NULL,
     domicilio VARCHAR(70) NOT NULL,
     poblacion VARCHAR(30) NOT NULL,
-    FOREIGN KEY(id_actividad) REFERENCES ACTIVIDADES(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_actividad)
+        REFERENCES ACTIVIDADES (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA IMAGENES DE NEGOCIOS*/
 CREATE TABLE IMAGENES_NEGOCIOS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_ape_neg SMALLINT NOT NULL,
     imagen BLOB NOT NULL,
-    FOREIGN KEY(id_ape_neg) REFERENCES APERTURAS_NEGOCIOS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_ape_neg)
+        REFERENCES APERTURAS_NEGOCIOS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA PLANOS DE NEGOCIO*/
 CREATE TABLE PLANOS_NEGOCIOS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_ape_neg SMALLINT NOT NULL,
     plano BLOB NOT NULL,
-    FOREIGN KEY(id_ape_neg) REFERENCES APERTURAS_NEGOCIOS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_ape_neg)
+        REFERENCES APERTURAS_NEGOCIOS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA OBRAS NUEVAS*/
 CREATE TABLE OBRAS_NUEVAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_actividad SMALLINT NOT NULL,
     domicilio VARCHAR(70) NOT NULL,
     poblacion VARCHAR(30) NOT NULL,
     superficie FLOAT,
-    aprob_col_arq CHAR(2) DEFAULT 'NO' CHECK(aprob_col_arq = 'SI' OR aprob_col_arq = 'NO'),
-    dir_obra CHAR(2) DEFAULT 'NS' NOT NULL CHECK(dir_obra = 'SI' OR dir_obra = 'NO' OR dir_obra = 'NS'),
-    FOREIGN KEY(id_actividad) REFERENCES ACTIVIDADES(id)
-    ON DELETE CASCADE
+    aprob_col_arq CHAR(2) DEFAULT 'NO' CHECK (aprob_col_arq = 'SI'
+        OR aprob_col_arq = 'NO'),
+    dir_obra CHAR(2) DEFAULT 'NS' NOT NULL CHECK (dir_obra = 'SI' 
+		OR dir_obra = 'NO'
+        OR dir_obra = 'NS'),
+    FOREIGN KEY (id_actividad)
+        REFERENCES ACTIVIDADES (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA IMAGENES DE OBRAS*/
 CREATE TABLE IMAGENES_OBRAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_obra SMALLINT NOT NULL,
     imagen BLOB NOT NULL,
-    FOREIGN KEY(id_obra) REFERENCES OBRAS_NUEVAS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_obra)
+        REFERENCES OBRAS_NUEVAS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA PLANOS DE OBRAS*/
 CREATE TABLE PLANOS_OBRAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_obra SMALLINT NOT NULL,
     plano BLOB NOT NULL,
-    FOREIGN KEY(id_obra) REFERENCES OBRAS_NUEVAS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_obra)
+        REFERENCES OBRAS_NUEVAS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA REFORMAS*/
 CREATE TABLE REFORMAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_actividad SMALLINT NOT NULL,
     domicilio VARCHAR(70) NOT NULL,
     poblacion VARCHAR(30) NOT NULL,
-    tipo_actuacion VARCHAR(20) NOT NULL CHECK(tipo_actuacion = 'local comercial' OR tipo_actuacion = 'nave industrial' OR tipo_actuacion = 'vivienda'),
-    tipo_reforma VARCHAR(20) NOT NULL CHECK(tipo_reforma = 'apliación' OR tipo_reforma = 'remodelación'),
-    demolicion CHAR(2) NOT NULL CHECK (demolicion = 'SI' OR demolicion = 'NO'),
+    tipo_actuacion VARCHAR(20) NOT NULL CHECK (tipo_actuacion = 'local comercial'
+        OR tipo_actuacion = 'nave industrial'
+        OR tipo_actuacion = 'vivienda'),
+    tipo_reforma VARCHAR(20) NOT NULL CHECK (tipo_reforma = 'apliación'
+        OR tipo_reforma = 'remodelación'),
+    demolicion CHAR(2) NOT NULL CHECK (demolicion = 'SI' 
+		OR demolicion = 'NO'),
     superficie FLOAT,
-    aprob_col_arq CHAR(2) DEFAULT 'NO' CHECK(aprob_col_arq = 'SI' OR aprob_col_arq = 'NO'),
-    dir_obra CHAR(2) DEFAULT 'NS' NOT NULL CHECK(dir_obra = 'SI' OR dir_obra = 'NO' OR dir_obra = 'NS'),
-    FOREIGN KEY(id_actividad) REFERENCES ACTIVIDADES(id)
-    ON DELETE CASCADE
+    aprob_col_arq CHAR(2) DEFAULT 'NO' CHECK (aprob_col_arq = 'SI'
+        OR aprob_col_arq = 'NO'),
+    dir_obra CHAR(2) DEFAULT 'NS' NOT NULL CHECK (dir_obra = 'SI' 
+		OR dir_obra = 'NO'
+        OR dir_obra = 'NS'),
+    FOREIGN KEY (id_actividad)
+        REFERENCES ACTIVIDADES (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA IMAGENES DE OBRAS*/
 CREATE TABLE IMAGENES_REFORMAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_refor SMALLINT NOT NULL,
     imagen BLOB NOT NULL,
-    FOREIGN KEY(id_refor) REFERENCES REFORMAS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_refor)
+        REFERENCES REFORMAS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA PLANOS DE OBRAS*/
 CREATE TABLE PLANOS_REFORMAS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_refor SMALLINT NOT NULL,
     plano BLOB NOT NULL,
-    FOREIGN KEY(id_refor) REFERENCES REFORMAS(id)
-    ON DELETE CASCADE
+    FOREIGN KEY (id_refor)
+        REFERENCES REFORMAS (id)
+        ON DELETE CASCADE
 );
 
 /*TABLA EXPEDIENTE*/
 CREATE TABLE EXPEDIENTES (
-	id SMALLINT PRIMARY KEY,
-	id_actividad SMALLINT NOT NULL,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+    id_actividad SMALLINT NOT NULL,
     fecha_apertura TIMESTAMP NOT NULL DEFAULT NOW(),
     fecha_cierre TIMESTAMP NOT NULL DEFAULT '2035-01-01',
-    aprob_mun CHAR(2) NOT NULL DEFAULT 'NO' CHECK(aprob_mun = 'SI' OR aprob_mun = 'NO'),
-    FOREIGN KEY(id_actividad) REFERENCES ACTIVIDADES(id)
+    aprob_mun CHAR(2) NOT NULL DEFAULT 'NO' CHECK (aprob_mun = 'SI' OR aprob_mun = 'NO'),
+    FOREIGN KEY (id_actividad)
+        REFERENCES ACTIVIDADES (id)
 );
 
 /*TABLA PRESUPUESTOS*/
 CREATE TABLE PRESUPUESTOS (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_expediente SMALLINT NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL DEFAULT NOW(),
     descripcion VARCHAR(560) NOT NULL,
     cantidad FLOAT NOT NULL,
-    descuento NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= descuento <=100),
-    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <=100),
+    descuento NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= descuento <= 100),
+    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <= 100),
     cantidad_total FLOAT NOT NULL,
-    FOREIGN KEY(id_expediente) REFERENCES EXPEDIENTES(id)
+    FOREIGN KEY (id_expediente)
+        REFERENCES EXPEDIENTES (id)
 );
 
 /*TABLA CUENTA EXPEDIENTE*/
 CREATE TABLE CUENTAS_EXPEDIENTE (
-	id SMALLINT PRIMARY KEY,
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_expediente SMALLINT NOT NULL,
     cantidad FLOAT NOT NULL,
-    descuento NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= descuento <=100),
-    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <=100),
+    descuento NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= descuento <= 100),
+    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <= 100),
     cantidad_total FLOAT NOT NULL,
-    FOREIGN KEY(id_expediente) REFERENCES EXPEDIENTES(id)
+    FOREIGN KEY (id_expediente)
+        REFERENCES EXPEDIENTES (id)
 );
 
 /*TABLA FACTURA*/
-CREATE TABLE FACTURA (
-	id SMALLINT PRIMARY KEY,
+CREATE TABLE FACTURAS (
+    id SMALLINT AUTO_INCREMENT PRIMARY KEY,
     id_cuenta SMALLINT NOT NULL,
     fecha_emision TIMESTAMP NOT NULL DEFAULT NOW(),
     descripcion VARCHAR(560) NOT NULL,
     cantidad FLOAT NOT NULL,
-    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <=100),
+    impuestos NUMERIC(3) NOT NULL DEFAULT 0 CHECK (0 <= impuestos <= 100),
     cantidad_total FLOAT NOT NULL,
-    FOREIGN KEY(id_cuenta) REFERENCES CUENTAS_EXPEDIENTE(id)
+    FOREIGN KEY (id_cuenta)
+        REFERENCES CUENTAS_EXPEDIENTE (id)
 );

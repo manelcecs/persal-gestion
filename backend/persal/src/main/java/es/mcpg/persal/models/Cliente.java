@@ -47,4 +47,10 @@ public class Cliente {
 	@OneToMany(mappedBy="nif_cliente")
 	private List<Email> emails;
 	
+	@OneToMany(mappedBy="nif_cliente")
+	private List<ClienteInactivo> clientesInactivos;
+	
+	@OneToMany(mappedBy="nif_cliente")
+	private List<Actividad> actividades;
+	
 }

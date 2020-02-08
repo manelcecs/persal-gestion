@@ -17,30 +17,29 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="actividades")
-
-public class Actividad {
+@Table(name="expedientes")
+public class Expediente {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	
 	@ManyToOne
-    @JoinColumn(name="nif", nullable=false)
-	private String nif_cliente;
+	@JoinColumn(name="id",nullable= false)
+	private Integer id_actividad;
 	
-	@Column(name="tipo_actividad")
-	private Integer tipo_actividad;
+	@Column(name="fecha_apertura")
+	private Date fecha_apertura;
 	
-	@Column(name="fecha_inicio")
-	private Date fecha_inicio;
+	@Column(name="fecha_cierre")
+	private Date fecha_cierre;
 	
-	@Column(name="fecha_fin")
-	private Date fecha_fin;
+	@Column(name="aprob_num")
+	private Boolean aprob_num;
 	
-	@OneToMany(mappedBy="id_actividad")
-	private List<ObraNueva> obrasNuevas;
+	@OneToMany(mappedBy="id_expediente")
+	private List<Presupuesto> presupuestos;
 	
-	@OneToMany(mappedBy="id_actividad")
-	private List<Expediente> expedientes;
+	@OneToMany(mappedBy="id_expediente")
+	private List<CuentaExpediente> cuentasExpedientes;
 }

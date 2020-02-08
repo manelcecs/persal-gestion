@@ -1,6 +1,5 @@
 package es.mcpg.persal.models;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,30 +16,31 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="actividades")
+@Table(name="cuentas_expediente")
+public class CuentaExpediente {
 
-public class Actividad {
-	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	
 	@ManyToOne
-    @JoinColumn(name="nif", nullable=false)
-	private String nif_cliente;
+	@JoinColumn(name="id", nullable= false)
+	private Integer id_expediente;
 	
-	@Column(name="tipo_actividad")
-	private Integer tipo_actividad;
+	@Column(name="cantidad")
+	private Double cantidad;
+
+	@Column(name="descuento")
+	private Double descuento;
 	
-	@Column(name="fecha_inicio")
-	private Date fecha_inicio;
+	@Column(name="impuestos")
+	private Double impuestos;
 	
-	@Column(name="fecha_fin")
-	private Date fecha_fin;
+	@Column(name="cantidad_total")
+	private Double cantidad_total;
 	
-	@OneToMany(mappedBy="id_actividad")
-	private List<ObraNueva> obrasNuevas;
+	@OneToMany(mappedBy="id_cuenta")
+	private List<Factura> facturas;
 	
-	@OneToMany(mappedBy="id_actividad")
-	private List<Expediente> expedientes;
+	
 }

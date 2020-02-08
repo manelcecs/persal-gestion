@@ -7,7 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import es.mcpg.persal.models.Cliente;
 
-public interface CustomClienteRepository extends PagingAndSortingRepository<Cliente, Integer>, JpaRepository<Cliente, Integer>{
+public interface CustomClienteRepository extends PagingAndSortingRepository<Cliente, String>, JpaRepository<Cliente, String>{
 
 	Page<Cliente> findByIdAndNombreAndPoblacionAndCodigoPostal(String id, String nombre, String poblacion, String codigoPostal, Pageable page);
 }

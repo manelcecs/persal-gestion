@@ -18,5 +18,5 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
 	
 	void delete(Cliente cliente);
 	
-	
+		
 }

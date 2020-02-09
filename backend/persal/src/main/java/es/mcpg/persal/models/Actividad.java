@@ -39,7 +39,8 @@ public class Actividad {
 	private Date fecha_fin;
 	
 	@OneToMany(mappedBy="id_actividad")
-	private List<ObraNueva> ObrasNuevas;
+	private List<ObraNueva> obrasNuevas;
 	
-
+	@OneToMany(mappedBy="id_actividad")
+	private List<Expediente> expedientes;
 }

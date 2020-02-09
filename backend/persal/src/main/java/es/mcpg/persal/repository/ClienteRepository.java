@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import es.mcpg.persal.dtos.ClienteDto;
 import es.mcpg.persal.models.Cliente;
 
-public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
+public interface ClienteRepository extends JpaRepository<Cliente, String>{
 
+	
 	List<Cliente> findAll();
 	
 	Optional<Cliente> findById(String nif);

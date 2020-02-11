@@ -38,11 +38,10 @@ public class ActividadService {
 		Type listType = new TypeToken<Page<ActividadDto>>() {}.getType();
 		
 		pageActividad = this.customActividadRepository.findByIdAndNifClienteAndTipoActividad(id, nif_cliente, tipo_actividad, page);
-		
-		return mapper.map(pageActividad, listType);
-		
-	}
 	
+		return mapper.map(pageActividad, listType);
+	
+}
 	public ActividadDto save(ActividadDto actividad) throws Exception {
 		this.validateActividad(actividad);
 		

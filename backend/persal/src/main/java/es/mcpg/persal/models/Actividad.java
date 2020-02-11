@@ -43,4 +43,5 @@ public class Actividad {
 	
 	@OneToMany(mappedBy="id_actividad")
 	private List<Expediente> expedientes;
+
 }

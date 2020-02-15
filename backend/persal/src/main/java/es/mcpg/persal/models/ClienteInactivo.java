@@ -16,7 +16,9 @@ import lombok.Data;
 @Table(name="clientes_inactivos")
 public class ClienteInactivo {
 
-	@Column(name="nif_cliente")
+	@Id 					//No habia niguna columna en el diagrama que fuera Primary key,como no se si hace falta especificarlo he puesto que sea el nif
+	@ManyToOne
+    @JoinColumn(name="nif", nullable=false)
     private String nif_cliente;
 	
 	@Column(name="fecha_inactivo")

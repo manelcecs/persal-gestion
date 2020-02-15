@@ -74,10 +74,7 @@ CREATE TABLE emails (
 /*TABLA CLIENTES INACTIVOS*/
 CREATE TABLE clientes_inactivos (
     fecha_inactivo TIMESTAMP NOT NULL DEFAULT NOW(),
-    nif_cliente CHAR(9) NOT NULL,
-    FOREIGN KEY (nif_cliente)
-        REFERENCES clientes (nif)
-        ON DELETE CASCADE
+    nif_cliente CHAR(9) NOT NULL
 );
 
 /*TABLA ACTIVIDADES*/

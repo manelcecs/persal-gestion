@@ -26,8 +26,8 @@ public class ClienteDto {
 	
 	private Date fechaUltimaActividad;
 	
-	private List<Telefono> telefonos;
+	private List<TelefonoDto> telefonos;
 	
-	private List<Email> emails;
+	private List<EmailDto> emails;
 	
 }

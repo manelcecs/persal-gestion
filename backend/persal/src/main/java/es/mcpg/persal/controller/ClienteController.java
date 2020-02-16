@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,5 +35,17 @@ public class ClienteController {
 	public ClienteDto saveCliente(@RequestBody ClienteDto cliente) throws Exception{
 		return this.clienteService.save(cliente);
 	}
+	
+	@PutMapping("/update")
+	public ClienteDto updateCliente(@RequestParam String idCliente, @RequestBody ClienteDto cliente) throws Exception{
+		return this.clienteService.update(cliente, idCliente);
+	}
+	
+	@GetMapping("/")
+	public ClienteDto getCliente(@RequestParam String idCliente) throws Exception {
+		return this.clienteService.getCliente(idCliente);
+	}
+	
+	
 
 }

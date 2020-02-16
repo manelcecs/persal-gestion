@@ -1,6 +1,7 @@
 package es.mcpg.persal.service;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,12 +30,14 @@ public class ClienteService {
 	@Autowired
 	CustomClienteRepository customClienteRepository;
 		
+	//Método para obtener un clinete según si nif
 	public ClienteDto getCliente(String nif) {
 		ModelMapper mapper = new ModelMapper();
 		Cliente clienteDB = this.clienteRepository.findById(nif).orElse(null);
 		return mapper.map(clienteDB, ClienteDto.class);
 	}
 	
+	//Metodo que devuelve una lista de clientes paginada
 	public Page<ClienteDto> getAllClientes(String nif,
 			String nombre,
 			String poblacion,
@@ -49,27 +52,72 @@ public class ClienteService {
 		
 	}
 	
+	//Método que guarda un cliente en BBDD (solo cuando se crea)
 	public ClienteDto save(ClienteDto cliente) throws Exception {
 		this.validateCliente(cliente);
 		
 		try {
-			Cliente clienteDto = this.clienteRepository.save(cliente);
-			return new ModelMapper().map(clienteDto, ClienteDto.class);
+			cliente.setFechaCreacion(new Date());
+			cliente.setFechaUltimaActividad(new Date());
+			Cliente clienteDB = this.clienteRepository.save(cliente);
+			return new ModelMapper().map(clienteDB, ClienteDto.class);
 		}catch(Exception e) {
 			throw new Exception("Error al guardar el cliente");
 		}
 	}
 	
+	//Método que actualiza un cliente de bbdd
+	public ClienteDto update(ClienteDto cliente, String id) throws Exception{
+		try {
+			Cliente clienteDB = this.clienteRepository.getOne(id);
+			if(clienteDB != null) {
+				clienteDB = this.fillCliente(clienteDB, cliente);
+				Cliente save = this.clienteRepository.save(clienteDB); 
+				
+				return new ModelMapper().map(save, ClienteDto.class);
+			}
+		}catch(Exception e) {
+			throw new Exception("Error al actualizar el cliente");
+		}
+		return null;
+	}
+	
+	//Metodo que settea la ultima fecha de actividad de un cliente
+	//Sólo para uso interno desde otros servicios
+	public void setUltimaFechaActividad(String clienteId) throws Exception{
+		try {
+			Cliente clienteDB = this.clienteRepository.getOne(clienteId);
+			clienteDB.setFechaUltimaActividad(new Date());
+			this.clienteRepository.save(clienteDB);
+		}catch(Exception e) {
+			throw new Exception("Error al acualizar la fecha de actividad");
+		}
+	}
+	
+	//Método que devuelve un cliente con los campos editables actualizados
+	private Cliente fillCliente(Cliente clienteDB, ClienteDto clienteDto) {
+		clienteDB.setApellidos(clienteDto.getApellidos());
+		clienteDB.setCodigoPostal(clienteDto.getCodigoPostal());
+		clienteDB.setDomicilio(clienteDto.getDomicilio());
+		clienteDB.setNombre(clienteDto.getNombre());
+		clienteDB.setPoblacion(clienteDto.getPoblacion());
+		return clienteDB;
+	}
+	
+	
+	//Método que valida los campos de un cliente
 	private void validateCliente(ClienteDto cliente) throws Exception{
 		if(validateFormatoNifCliente(cliente) || validateValorNIFCliente(cliente) || validateDatosDeContacto(cliente)) {
 			throw new Exception("Error al validar los campos introducidos del cliente");
 		}
 	}
 	
+	//Método que valida el formato del nif/nie de un cliente
 	private boolean validateFormatoNifCliente(ClienteDto cliente) {
 		return Pattern.compile("((([X-Z])|(LM)){1}((\\d){7})([A-Z]{1}))|((\\d{8})([a-zA-Z]))").matcher(cliente.getNif()).matches();
 	}
 	
+	//Método que valida el nif de un cliente
 	private boolean validateValorNIFCliente(ClienteDto cliente) {
 		if(Character.isAlphabetic(cliente.getNif().substring(0, 1).toCharArray()[0])) {
 			//Es un NIE, no lo validamos
@@ -82,11 +130,12 @@ public class ClienteService {
 		}
 	}
 	
-	
+	//Método que valida los datos de contacto de un cliente
 	private boolean validateDatosDeContacto(ClienteDto cliente) {
 		return validateTelefonos(cliente.getTelefonos()) && validateEmails(cliente.getEmails());
 	}
 	
+	//Método que valida la lista de teléfonos de un cliente
 	private boolean validateTelefonos(List<TelefonoDto> telefonos) {
 		boolean res = true;
 		for(TelefonoDto tel : telefonos) {
@@ -95,6 +144,7 @@ public class ClienteService {
 		return res;
 	}
 	
+	//Método que valida los emails de un cliente
 	private boolean validateEmails(List<EmailDto> emails) {
 		boolean res = true;
 		for(EmailDto mail : emails) {

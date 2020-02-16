@@ -30,7 +30,7 @@ public class ClienteService {
 	@Autowired
 	CustomClienteRepository customClienteRepository;
 		
-	//Método para obtener un clinete según si nif
+	//Método para obtener un clinete según su nif
 	public ClienteDto getCliente(String nif) {
 		ModelMapper mapper = new ModelMapper();
 		Cliente clienteDB = this.clienteRepository.findById(nif).orElse(null);
@@ -105,6 +105,7 @@ public class ClienteService {
 	}
 	
 	
+	
 	//Método que valida los campos de un cliente
 	private void validateCliente(ClienteDto cliente) throws Exception{
 		if(validateFormatoNifCliente(cliente) || validateValorNIFCliente(cliente) || validateDatosDeContacto(cliente)) {
@@ -114,7 +115,7 @@ public class ClienteService {
 	
 	//Método que valida el formato del nif/nie de un cliente
 	private boolean validateFormatoNifCliente(ClienteDto cliente) {
-		return Pattern.compile("((([X-Z])|(LM)){1}((\\d){7})([A-Z]{1}))|((\\d{8})([a-zA-Z]))").matcher(cliente.getNif()).matches();
+		return Pattern.compile("((([X-Z])|(LM)){1}((\\d){7})([A-Z]{1}))|((\\d{8})([a-zA-Z]){1})").matcher(cliente.getNif()).matches();
 	}
 	
 	//Método que valida el nif de un cliente
